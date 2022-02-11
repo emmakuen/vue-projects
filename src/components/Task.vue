@@ -1,6 +1,12 @@
 <template>
-  <div class="task">
-    <p>{{ task.text }}</p>
+  <div
+    :class="[task.reminder ? 'reminder' : '', 'task']"
+    @dblclick="onDoubleClick(task.id)"
+  >
+    <h3>
+      {{ task.text }} <i class="fas fa-times" @click="onDelete(task.id)"></i>
+    </h3>
+    <p>{{ task.day }}</p>
   </div>
 </template>
 
@@ -10,5 +16,33 @@ export default {
   props: {
     task: Object,
   },
+  methods: {
+    onDelete(id) {
+      this.$emit("delete-task", id);
+    },
+    onDoubleClick(id) {
+      this.$emit("toggle-reminder", id);
+    },
+  },
 };
 </script>
+
+<style scoped>
+.fas {
+  color: red;
+}
+.task {
+  background: #f4f4f4;
+  margin: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.task.reminder {
+  border-left: 5px solid green;
+}
+.task h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+</style>
