@@ -5,7 +5,9 @@
       v-for="home in homes"
       style="float: left; margin: 10px"
     >
-      <HomeCard :home="home" />
+      <nuxt-link :to="`/home/${home.objectID}`" prefetch>
+        <home-card :home="home" />
+      </nuxt-link>
     </div>
   </div>
 </template>
