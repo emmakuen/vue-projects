@@ -2,7 +2,7 @@
   <div>
     <img
       src="https://media1.giphy.com/media/8L0Pky6C83SzkzU55a/giphy.gif?cid=790b76118284230a6b62a635762786c9957b27d6d8f27a3e&rid=giphy.gif&ct=g"
-      alt=""
+      alt="Error gif"
     /><br /><br />
     <h1>Error!</h1>
     {{ error.message }} {{ error.statusCode }}
