@@ -7,6 +7,7 @@ export default function (context, inject) {
   addScript();
   inject("maps", {
     showMap,
+    makeAutocomplete,
   });
 
   function addScript() {
@@ -25,6 +26,21 @@ export default function (context, inject) {
       }
     });
     waiting = [];
+  }
+
+  function makeAutocomplete(input) {
+    if (!isLoaded) {
+      waiting.push({ fn: makeAutocomplete, arguments });
+      return;
+    }
+
+    const autocomplete = new window.google.maps.places.Autocomplete(input, {
+      types: ["(cities)"],
+    });
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      input.dispatchEvent(new CustomEvent("changed", { detail: place }));
+    });
   }
 
   function showMap(canvas, lat, lng) {
