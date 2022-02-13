@@ -7,6 +7,7 @@ export default function (context, inject) {
   inject("dataApi", {
     getHome,
     getReviewsByHomeId,
+    getUserByHomeId,
   });
   async function getHome(homeId) {
     const url = `https://${secrets.search_app_id}-dsn.algolia.net/1/indexes/homes/${homeId}`;
@@ -28,6 +29,24 @@ export default function (context, inject) {
           body: JSON.stringify({
             filters: `homeId:${homeId}`,
             hitsPerPage: 5,
+            attributesToHighlight: [],
+          }),
+        })
+      );
+    } catch (error) {
+      return getErrorResponse(error);
+    }
+  }
+
+  async function getUserByHomeId(homeId) {
+    try {
+      const url = `https://${secrets.search_app_id}-dsn.algolia.net/1/indexes/users/query`;
+      return unwrap(
+        await fetch(url, {
+          headers,
+          method: "POST",
+          body: JSON.stringify({
+            filters: `homeId:${homeId}`,
             attributesToHighlight: [],
           }),
         })

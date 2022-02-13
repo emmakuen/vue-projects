@@ -25,6 +25,11 @@
       {{ formatDate(review.date) }} <br />
       <short-text :text="review.comment" :target="150" /> <br />
     </div>
+    <img :src="user.image" /> <br />
+    {{ user.name }} <br />
+    {{ formatDate(user.joined) }} <br />
+    {{ user.reviewCount }} reviews <br />
+    {{ user.description }}
   </div>
 </template>
 
@@ -54,20 +59,24 @@ export default {
     );
   },
   async asyncData({ params, $dataApi, error }) {
-    const homeResponse = await $dataApi.getHome(params.id);
-    if (!homeResponse.ok)
+    const responses = await Promise.all([
+      $dataApi.getHome(params.id),
+      $dataApi.getReviewsByHomeId(params.id),
+      $dataApi.getUserByHomeId(params.id),
+    ]);
+
+    const badResponse = responses.find((response) => !response.ok);
+    if (badResponse)
       return error({
         statusCode: homeResponse.status,
         message: homeResponse.statusText,
       });
 
-    const reviewResponse = await $dataApi.getReviewsByHomeId(params.id);
-    if (!reviewResponse.ok)
-      return error({
-        statusCode: reviewResponse.status,
-        message: reviewResponse.statusText,
-      });
-    return { home: homeResponse.json, reviews: reviewResponse.json.hits };
+    return {
+      home: responses[0].json,
+      reviews: responses[1].json.hits,
+      user: responses[2].json.hits[0],
+    };
   },
 };
 </script>
