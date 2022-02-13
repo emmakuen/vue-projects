@@ -8,6 +8,7 @@ export default function (context, inject) {
     getHome,
     getReviewsByHomeId,
     getUserByHomeId,
+    getHomesByLocation,
   });
   async function getHome(homeId) {
     const url = `https://${secrets.search_app_id}-dsn.algolia.net/1/indexes/homes/${homeId}`;
@@ -47,6 +48,26 @@ export default function (context, inject) {
           method: "POST",
           body: JSON.stringify({
             filters: `homeId:${homeId}`,
+            attributesToHighlight: [],
+          }),
+        })
+      );
+    } catch (error) {
+      return getErrorResponse(error);
+    }
+  }
+
+  async function getHomesByLocation(lat, lng, radiusInMeters = 1500) {
+    try {
+      const url = `https://${secrets.search_app_id}-dsn.algolia.net/1/indexes/homes/query`;
+      return unwrap(
+        await fetch(url, {
+          headers,
+          method: "POST",
+          body: JSON.stringify({
+            hitsPerPage: 10,
+            aroundRadius: radiusInMeters,
+            aroundLatLng: `${lat}, ${lng}`,
             attributesToHighlight: [],
           }),
         })
