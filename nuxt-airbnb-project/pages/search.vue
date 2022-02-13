@@ -8,7 +8,11 @@
         :key="home.objectID"
         :to="`/home/${home.objectID}`"
       >
-        <HomeRow :home="home" />
+        <HomeRow
+          :home="home"
+          @mouseover.native="highlightMarker(home.objectID, true)"
+          @mouseout.native="highlightMarker(home.objectID, false)"
+        />
       </nuxt-link>
     </div>
     <div v-else>No results found</div>
@@ -26,6 +30,11 @@ export default {
     this.updateMap();
   },
   methods: {
+    highlightMarker(homeId, isHighlighted) {
+      document
+        .getElementsByClassName(`home-${homeId}`)[0]
+        ?.classList?.toggle("marker-highlight", isHighlighted);
+    },
     updateMap() {
       this.$maps.showMap(
         this.$refs.map,
@@ -39,6 +48,7 @@ export default {
         return {
           ...home._geoloc,
           pricePerNight: home.pricePerNight,
+          id: home.objectID,
         };
       });
     },
@@ -75,5 +85,11 @@ export default {
   font-weight: bold;
   border-radius: 20px;
   padding: 5px 8px;
+}
+
+.marker-highlight {
+  color: white !important;
+  background-color: black;
+  border-color: black;
 }
 </style>
